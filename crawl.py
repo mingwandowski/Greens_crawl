@@ -1,3 +1,4 @@
+import os
 import sys
 import json
 import scrapy
@@ -42,7 +43,13 @@ class GreensSpider(scrapy.Spider):
         # Convert the date to a string in the desired format
         data["date"] = data["date"].isoformat()
 
-        # Write data to "greens.jsonl" file in current directory
-        with open("/Users/mingwandowski/Developer/greens_crawl/greens.jsonl", "a") as f:
+        # Determine the root directory of your project
+        root_directory = os.path.dirname(os.path.abspath(__file__))
+
+        # Construct the path to "greens.jsonl" in the root directory
+        file_path = os.path.join(root_directory, "greens.jsonl")
+
+        # Write data to "greens.jsonl" file in the root directory
+        with open(file_path, "a") as f:
             json.dump(data, f)
             f.write("\n")
