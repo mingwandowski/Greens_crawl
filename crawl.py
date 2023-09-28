@@ -38,6 +38,12 @@ class GreensSpider(scrapy.Spider):
         # Convert the date to a string in the desired format
         data["date"] = data["date"].isoformat()
 
+        # self.write_local(data)
+
+        json_data = json.dumps(data)
+        print(json_data)
+
+    def write_local(self, data):
         # Determine the root directory of your project
         root_directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -45,9 +51,6 @@ class GreensSpider(scrapy.Spider):
         file_path = os.path.join(root_directory, "greens.jsonl")
 
         # Write data to "greens.jsonl" file in the root directory
-        # with open(file_path, "a") as f:
-        #     json.dump(data, f)
-        #     f.write("\n")
-
-        json_data = json.dumps(data)
-        print(json_data)
+        with open(file_path, "a") as f:
+            json.dump(data, f)
+            f.write("\n")
