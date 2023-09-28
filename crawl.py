@@ -1,5 +1,4 @@
 import os
-import sys
 import json
 import scrapy
 from datetime import datetime
@@ -13,9 +12,6 @@ class GreensSpider(scrapy.Spider):
 
     def __init__(self, *args, **kwargs):
         super(GreensSpider, self).__init__(*args, **kwargs)
-
-        # Inspect the sys.argv list to see the command-line arguments
-        print("Command-line arguments:", sys.argv)
 
     def parse(self, response):
         data = {
@@ -36,7 +32,6 @@ class GreensSpider(scrapy.Spider):
                 "price": rent_value
             })
 
-        # Instead of yielding, call the write_to_file method
         self.write_to_file(data)
 
     def write_to_file(self, data):
@@ -53,3 +48,6 @@ class GreensSpider(scrapy.Spider):
         with open(file_path, "a") as f:
             json.dump(data, f)
             f.write("\n")
+
+        json_data = json.dumps(data)
+        print(json_data)

@@ -4,19 +4,17 @@
 name: Python application
 
 on:
+  schedule:
+    - cron: '*/5 * * * *'
   push:
     branches: [ "main", "test" ]
-  pull_request:
-    branches: [ "main" ]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
@@ -28,12 +26,28 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install scrapy
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
+    - name: Run scrapy
+      id: scrapy_step
       run: |
-        python spider_script.py >> logfile.log 2>&1
+        result=$(scrapy runspider crawl.py)
+        echo $result
+        echo ::set-output name=result::$result
+ 
+    - name: Append file
+      run: |
+        result='${{ steps.scrapy_step.outputs.result }}'
+        echo "$result" >> ./greens.jsonl
+    - name: Commit & Push
+      uses: Andro999b/push@v1.3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: test
+        force: true
+        message: 'Test commit'
