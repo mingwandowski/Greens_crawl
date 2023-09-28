@@ -45,9 +45,9 @@ class GreensSpider(scrapy.Spider):
         file_path = os.path.join(root_directory, "greens.jsonl")
 
         # Write data to "greens.jsonl" file in the root directory
-        with open(file_path, "a") as f:
-            json.dump(data, f)
-            f.write("\n")
+        # with open(file_path, "a") as f:
+        #     json.dump(data, f)
+        #     f.write("\n")
 
         json_data = json.dumps(data)
         print(json_data)
