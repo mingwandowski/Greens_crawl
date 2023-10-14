@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Room Prices by Date</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+</head>
+<body>
+    <h1>Room Prices by Date</h1>
+    <div>
+        <canvas id="roomPriceChart" width="400" height="600"></canvas>
+    </div>
+
+    <script>
+        // Fetch the JSON data from the URL
+        fetch("https://raw.githubusercontent.com/mingwandowski/Greens_crawl/main/greens.jsonl")
+            .then(response => response.text())
+            .then(text => {
+                const jsonLines = text.split('\n'); // Split the text into lines
+                const data = jsonLines
+                    .filter(line => line.trim() !== "") // Filter out any empty lines
+                    .map(line => JSON.parse(line)); // Parse each line as JSON
+
+                const dates = data.map(item => item.date);
+                const roomTypes = data[0].info.map(room => room.type);
+                const pricesByRoomType = {};
+
+                roomTypes.forEach(roomType => {
+                    pricesByRoomType[roomType] = data.map(item =>
+                        item.info.find(info => info.type === roomType).price
+                    );
+                });
+
+                const ctx = document.getElementById('roomPriceChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: roomTypes.map(roomType => ({
+                            label: roomType,
+                            data: pricesByRoomType[roomType],
+                            borderColor: '#' + (Math.random() * 0xFFFFFF << 0).toString(16), // Random color
+                            fill: false
+                        }))
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    unit: 'day',
+                                    displayFormats: {
+                                        day: 'MMM d'
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Date'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Price'
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error(error));
+    </script>
+</body>
+</html>
