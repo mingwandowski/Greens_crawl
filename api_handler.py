@@ -58,7 +58,7 @@ def fetch_and_analyze_data():
     print(json.dumps(unique_units_list, indent=2))
     
     # 添加邮件发送功能
-    # send_email(unique_units_list)
+    send_email(unique_units_list)
 
 def analyze_data(data):
     # 提取并打印关心的字段
