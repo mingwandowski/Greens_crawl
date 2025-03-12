@@ -82,10 +82,16 @@ def send_email(data):
     # 从环境变量获取配置
     api_key = os.environ.get('SENDGRIDAPIKEY')
     receiver_email = os.environ.get('MYEMAIL')
+    receiver_email2 = os.environ.get('MYEMAIL2')
     
     if not api_key or not receiver_email:
         print("缺少必要的环境变量配置")
         return
+    
+    # 准备收件人列表
+    to_list = [{"email": receiver_email}]
+    if receiver_email2:
+        to_list.append({"email": receiver_email2})
     
     # SendGrid配置
     url = "https://api.sendgrid.com/v3/mail/send"
@@ -94,7 +100,7 @@ def send_email(data):
     email_data = {
         "personalizations": [
             {
-                "to": [{"email": receiver_email}],
+                "to": to_list,
                 "subject": "Greens Crawl Results"
             }
         ],
